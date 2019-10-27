@@ -3,8 +3,13 @@ package com.example.demo.service;
 import com.example.demo.model.Brief;
 import com.example.demo.repository.BriefRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,7 +25,6 @@ public class BriefServiceImpl implements BriefService {
     @Override
     public void add(Brief brief) {
         briefRepository.add(brief);
-
     }
 
     @Override
@@ -39,7 +43,20 @@ public class BriefServiceImpl implements BriefService {
     }
 
     @Override
-    public List<Brief> findByClientId(int clientId) {
-        return briefRepository.findByClientId(clientId);
+    public List<Brief> findAll(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Brief> pagedResult = briefRepository.findBySortAndPage(paging);
+
+        if(pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Brief>();
+        }
+    }
+
+    public Page<Brief> findAllPage(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        return briefRepository.findBySortAndPage(paging);
     }
 }

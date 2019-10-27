@@ -3,6 +3,8 @@ package com.example.demo.repository.datajpa;
 import com.example.demo.model.Brief;
 import com.example.demo.repository.BriefRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,7 +36,12 @@ public class DataJpaBriefRepositoryImpl implements BriefRepository {
     }
 
     @Override
-    public List<Brief> findByClientId(int clientId) {
-        return briefRepository.findAllByClientId(clientId);
+    public List<Brief> findAll() {
+        return briefRepository.findAll();
+    }
+
+    @Override
+    public Page<Brief> findBySortAndPage(Pageable page) {
+        return briefRepository.findAll(page);
     }
 }

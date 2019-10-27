@@ -1,10 +1,8 @@
 package com.example.demo.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name="t_media_brief")
@@ -18,17 +16,25 @@ public class Brief {
     @Column(name="comment")
     private String comment;
 
-    @Column(name = "ID_CLIENT")
-    private int clientId;
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(
+            name="t_media_brief_practices",
+            joinColumns = @JoinColumn(name="id_brief"),
+            inverseJoinColumns = @JoinColumn(name="id_practice")
+    )
+    private Set<Practice> practices;
+
+    @ManyToOne()
+    @JoinColumn(name="ID_CLIENT", nullable=false)
+    private Partner partner;
 
     public Brief() {
     }
 
-    public Brief(int id, String campaign, String comment, int clientId) {
+    public Brief(int id, String campaign, String comment) {
         this.id = id;
         this.campaign = campaign;
         this.comment = comment;
-        this.clientId = clientId;
     }
 
     public int getId() {
@@ -55,12 +61,20 @@ public class Brief {
         this.comment = comment;
     }
 
-    public int getClientId() {
-        return clientId;
+    public Partner getPartner() {
+        return partner;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setPartner(Partner partner) {
+        this.partner = partner;
+    }
+
+    public Set<Practice> getPractices() {
+        return practices;
+    }
+
+    public void setPractices(Set<Practice> practices) {
+        this.practices = practices;
     }
 
     @Override
@@ -69,7 +83,6 @@ public class Brief {
         if (o == null || getClass() != o.getClass()) return false;
         Brief brief = (Brief) o;
         return id == brief.id &&
-                clientId == brief.clientId &&
                 Objects.equals(campaign, brief.campaign) &&
                 Objects.equals(comment, brief.comment);
     }
